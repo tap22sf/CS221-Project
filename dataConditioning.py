@@ -2,24 +2,8 @@ import os
 import csv
 import numpy as np
 import cv2
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 from zipfile import ZipFile
 from PIL import Image
-
-# import keras
-import keras
-
-# import keras_retinanet
-import sys
-sys.path.append('.\\keras-retinanet')
-sys.path.append('.\\keras-resnet')
-
-from keras_retinanet import models
-from keras_retinanet.utils.image import read_image_bgr, preprocess_image, resize_image
-from keras_retinanet.utils.visualization import draw_box, draw_caption
-from keras_retinanet.utils.colors import label_color
-
 import prepRetinaNet
 
 quick = 1
@@ -329,11 +313,13 @@ trainImageDatsetCSV       = 'ChallengeMetaData\\challenge-2018-train-vrd.csv'
 trainBBoxDatsetCSV        = 'ChallengeMetaData\\challenge-2018-train-vrd-bbox.csv'
 trainLabelsDatsetCSV      = 'ChallengeMetaData\\challenge-2018-train-vrd-labels.csv'
 trainClassesDatsetCSV     = 'ChallengeMetaData\\challenge-2018-classes-vrd.csv'
+
 retinaNetTrainCSV         = 'Output\\retinaNetTrain.csv'
 retinaNetClassCSV         = 'Output\\retinaNetTrainClass.csv'
 
 desitnationDir            = 'F:\TrainingImages'
 valImageDatsetCSV         = 'ChallengeMetaData\\cchallenge-2018-image-ids-valset-vrd.csv'
+trainImages               = 'ChallengeMetaData\\train-images-boxable-with-rotation.csv'
 
 print ("Starting Training Set Image Extraction")
 extract = False
@@ -351,62 +337,5 @@ readBBoxes(detectedImages, trainBBoxDatsetCSV)
 # Generate a csvfile for training that is retinanet friendly
 writeRetinanetTrainCSV(detectedImages, retinaNetTrainCSV, retinaNetClassCSV)
 
-# Plot the first image
-fig = plt.figure()
-scale = 1.5
-
-fig.set_size_inches(np.array(fig.get_size_inches()) * scale)
-plt.axis('off')
-num = 3
-count = 1
-
-# 
-prepRetinaNet.createSession()
-model = prepRetinaNet.loadModel()
-
-# load label to names mapping for visualization purposes
-labels_to_names = {0: 'person', 1: 'bicycle', 2: 'car', 3: 'motorcycle', 4: 'airplane', 5: 'bus', 6: 'train', 7: 'truck', 8: 'boat', 9: 'traffic light', 10: 'fire hydrant', 11: 'stop sign', 12: 'parking meter', 13: 'bench', 14: 'bird', 15: 'cat', 16: 'dog', 17: 'horse', 18: 'sheep', 19: 'cow', 20: 'elephant', 21: 'bear', 22: 'zebra', 23: 'giraffe', 24: 'backpack', 25: 'umbrella', 26: 'handbag', 27: 'tie', 28: 'suitcase', 29: 'frisbee', 30: 'skis', 31: 'snowboard', 32: 'sports ball', 33: 'kite', 34: 'baseball bat', 35: 'baseball glove', 36: 'skateboard', 37: 'surfboard', 38: 'tennis racket', 39: 'bottle', 40: 'wine glass', 41: 'cup', 42: 'fork', 43: 'knife', 44: 'spoon', 45: 'bowl', 46: 'banana', 47: 'apple', 48: 'sandwich', 49: 'orange', 50: 'broccoli', 51: 'carrot', 52: 'hot dog', 53: 'pizza', 54: 'donut', 55: 'cake', 56: 'chair', 57: 'couch', 58: 'potted plant', 59: 'bed', 60: 'dining table', 61: 'toilet', 62: 'tv', 63: 'laptop', 64: 'mouse', 65: 'remote', 66: 'keyboard', 67: 'cell phone', 68: 'microwave', 69: 'oven', 70: 'toaster', 71: 'sink', 72: 'refrigerator', 73: 'book', 74: 'clock', 75: 'vase', 76: 'scissors', 77: 'teddy bear', 78: 'hair drier', 79: 'toothbrush'}
-
-for id, ID in detectedImages.items():
-    
-    # Just show the first image
-    if ID.detected:
-        subPlot = fig.add_subplot(1,num,count) # Make subplot
-        #ID.prep()
-        #ID.addImage(subPlot)
-        count += 1
-        
-        # Now apply some of the retina preprocessing
-        image = read_image_bgr(ID.path)
-
-        # copy to draw on
-        draw = image.copy()
-        draw = cv2.cvtColor(draw, cv2.COLOR_BGR2RGB)
-
-        # preprocess image for network
-        image = preprocess_image(image)
-        image, scale = resize_image(image)
-
-        # Run inference on the image:
-        boxes, scores, labels = model.predict_on_batch(np.expand_dims(image, axis=0))
-        # visualize detections
-        for box, score, label in zip(boxes[0], scores[0], labels[0]):
-            
-            # scores are sorted so we can break
-            if score < 0.5:
-                break
-        
-            color = label_color(label)
-    
-            b = box.astype(int)
-            draw_box(draw, b, color=color)
-    
-            caption = "{} {:.3f}".format(labels_to_names[label], score)
-            draw_caption(draw, b, caption)
-        
-        plt.imshow(draw)
-
-    if count > num: break
-    
-plt.show()
-
+# Generate a csvfile that lists the validation images for the VRD
+#
