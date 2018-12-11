@@ -6,11 +6,9 @@
 *.user
 *.userosscache
 *.sln.docstates
-*.csv
 
 .idea
 .vs
-
 Traintemp
 keras-resnet
 keras-retinanet
