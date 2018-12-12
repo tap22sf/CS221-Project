@@ -101,7 +101,7 @@ class ImageDescriptor:
             subplot.add_patch(rect)
 
 
-def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick):
+def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick, noCopy):
     # If we are extracting from a zip -
     # Make sure destination Dir exists
     if not os.path.exists(destDir):
@@ -141,13 +141,18 @@ def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick):
 
             if fn in dirlist:
 
-                imageList[imageID] = ImageDescriptor(imageID, True, "dirscan", os.path.join(destDir,fn))
-
                 # Copy to the destination if missing
                 src = os.path.join(srcDir, fn)
                 dst = os.path.join(destDir, fn)
 
-                copyfile(src, dst)
+                fp = dst
+                if noCopy:
+                    fp = src
+
+                imageList[imageID] = ImageDescriptor(imageID, True, "dirscan", fp)
+
+                if not noCopy:
+                    copyfile(src, dst)
 
                 count += 1
                 if count % 10000 == 0:
@@ -163,7 +168,7 @@ def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick):
 
     return
 
-def extractChallengeImages(datasetCSV, srcDir, destinationDirectory, extract, quick):
+def extractChallengeImages(datasetCSV, srcDir, destinationDirectory, extract, quick, noCopy):
 
     # First column is the image list
     trainingImageList = {}
@@ -192,7 +197,7 @@ def extractChallengeImages(datasetCSV, srcDir, destinationDirectory, extract, qu
 
 
 
-    extractAllImages(trainingImageList, imageFiles, srcDir, destinationDirectory, extract, quick)
+    extractAllImages(trainingImageList, imageFiles, srcDir, destinationDirectory, extract, quick, noCopy)
     
     total = 0
     used = 0
@@ -387,6 +392,7 @@ if super:
 
 # Extract from Zip files?
 extract = False
+noCopy = True
 
 # Shorten the dataset?
 quick = False
@@ -395,7 +401,7 @@ quick = False
 trainSplit = .8
 
 print ("Starting Training Set Image Extraction")
-detectedImages = extractChallengeImages(trainImageDatsetCSV, fullDatasetDir, desitnationDir, extract, quick)
+detectedImages = extractChallengeImages(trainImageDatsetCSV, fullDatasetDir, desitnationDir, extract, quick, noCopy)
 
 # Set up classes decoder
 classDict = readClasses(trainClassesDatsetCSV)
