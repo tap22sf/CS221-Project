@@ -132,14 +132,18 @@ def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick, noCop
     # Just scan the source directory and copy to the dest
     else:
         count = 0
-        dirlist = os.listdir(srcDir)
+        dirdict = {}
+
+        for f in os.listdir(srcDir):
+            dirdict[f] = True
+
         print("Detected {} images in source directory".format(len(dirlist)))
 
         # Extract if found in the dictionary
         for imageID in imageList:
             fn = imageID + '.jpg'
 
-            if fn in dirlist:
+            if fn in dirdict:
 
                 # Copy to the destination if missing
                 src = os.path.join(srcDir, fn)
@@ -392,7 +396,7 @@ if super:
 
 # Extract from Zip files?
 extract = False
-noCopy = True
+noCopy = False
 
 # Shorten the dataset?
 quick = False
