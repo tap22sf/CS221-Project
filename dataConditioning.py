@@ -137,7 +137,6 @@ def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick):
         # Extract if found in the dictionary
         for imageID in imageList:
             fn = imageID + '.jpg'
-            print(fn)
 
             if fn in dirlist:
 
