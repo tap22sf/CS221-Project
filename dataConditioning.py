@@ -132,18 +132,21 @@ def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick):
     # Just scan the source directory and copy to the dest
     else:
         count = 0
-        for root, dirs, files in os.walk(srcDir):
-            print ('Looking at {}'.format(root))
+        with os.scandir(srcDir) as it:
 
-            for f in files:
-                imageID = os.path.splitext(os.path.basename(f))[0]
+            # Extract if found in the dictionary
+            for imageID in imageList:
+                fn = imageID + '.jpg'
+                print(fn)
 
-                # Extract if found in the dictionary
-                if imageID in imageList:
-                    imageList[imageID] = ImageDescriptor(imageID, True, "dirscan", destDir+'\\'+f)
+                if fn in it:
+
+                    f = fn.name
+
+                    imageList[imageID] = ImageDescriptor(imageID, True, "dirscan", destDir+'/'+f)
 
                     # Copy to the destination if missing
-                    copyfile(root+'\\'+f, destDir+'\\'+f)
+                    copyfile(root+'/'+f, destDir+'/'+f)
 
                     count += 1
                     if count % 10000 == 0:
@@ -151,6 +154,11 @@ def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick):
 
                     if quick and count == 100:
                         return
+
+                else:
+                    print("Not in")
+
+
 
     return
 
@@ -161,9 +169,13 @@ def extractChallengeImages(datasetCSV, srcDir, destinationDirectory, extract, qu
     with open(os.path.join(datasetCSV)) as f:
         csvreader = csv.reader(f)
         next(csvreader)
+        count = 0
         for row in csvreader:
             # An dictionary of "ID, found, location"
             trainingImageList[row[0]] = ImageDescriptor(row[0], False, "csv", "")
+            count += 1
+
+    print("Detected {} images in CSV".format(count))
 
     # List of directories with unzipped image files
     imageFiles = [          'G:\\train_00',
@@ -356,7 +368,7 @@ valImageDatsetCSV         = 'ChallengeMetaData\\challenge-2018-image-ids-valset-
 trainImages               = 'ChallengeMetaData\\train-images-boxable-with-rotation.csv'
 
 # Updated to work with SaturnV
-super = False
+super = True
 if super:
     trainImageDatsetCSV       = './ChallengeMetaData/challenge-2018-train-vrd.csv'
     trainBBoxDatsetCSV        = './ChallengeMetaData/challenge-2018-train-vrd-bbox.csv'
