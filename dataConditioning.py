@@ -304,11 +304,11 @@ def writeRetinanetTrainCSV(imageList, trainbCSVName, devCSVName, lcsvName, train
     print('Generating RetinaNet training files')
 
     # Open up the new outputfiles
-    with open(os.path.join(trainbCSVName), 'w', newline='') as f:
-        trainWriter = csv.writer(f)
+    with open(os.path.join(trainbCSVName), 'w', newline='') as ft:
+        trainWriter = csv.writer(ft)
 
-        with open(os.path.join(devCSVName), 'w', newline='') as fl:
-            devWriter = csv.writer(fl)
+        with open(os.path.join(devCSVName), 'w', newline='') as fd:
+            devWriter = csv.writer(fd)
 
             with open(os.path.join(lcsvName), 'w', newline='') as fl:
                 labelWriter = csv.writer(fl)
