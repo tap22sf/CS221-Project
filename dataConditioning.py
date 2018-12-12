@@ -333,18 +333,18 @@ valImageDatsetCSV         = 'ChallengeMetaData\\cchallenge-2018-image-ids-valset
 trainImages               = 'ChallengeMetaData\\train-images-boxable-with-rotation.csv'
 
 # Updated to work with SaturnV
-trainImageDatsetCSV       = '/home/dataset/OpenImagesV4/challenge-2018-train-vrd.csv'
-trainBBoxDatsetCSV        = '/home/dataset/OpenImagesV4/challenge-2018-train-vrd-bbox.csv'
-trainLabelsDatsetCSV      = '/home/dataset/OpenImagesV4/workspace/OpenImagesV4/ChallengeMetaData/challenge-2018-train-vrd-labels.csv'
-trainClassesDatsetCSV     = '/home/dataset/OpenImagesV4/ChallengeMetaData/challenge-2018-classes-vrd.csv'
+trainImageDatsetCSV       = './ChallengeMetaData/challenge-2018-train-vrd.csv'
+trainBBoxDatsetCSV        = './ChallengeMetaData/challenge-2018-train-vrd-bbox.csv'
+trainLabelsDatsetCSV      = './ChallengeMetaData/challenge-2018-train-vrd-labels.csv'
+trainClassesDatsetCSV     = './ChallengeMetaData/challenge-2018-classes-vrd.csv'
 fullDatasetDir            = '/home/dataset/OpenImagesV4/train'
 
 desitnationDir            = '/workspace/TrainingImages'
 retinaNetTrainCSV         = 'Output/retinaNetTrain.csv'
 retinaNetClassCSV         = 'Output/retinaNetTrainClass.csv'
 
-valImageDatsetCSV         = '/workspace/OpenImagesV4/challenge-2018-image-ids-valset-vrd.csv'
-trainImages               = '/workspace/OpenImagesV4/train-images-boxable-with-rotation.csv'
+valImageDatsetCSV         = './ChallengeMetaData/challenge-2018-image-ids-valset-vrd.csv'
+trainImages               = './ChallengeMetaData/train-images-boxable-with-rotation.csv'
 
 print ("Starting Training Set Image Extraction")
 detectedImages = extractChallengeImages(trainImageDatsetCSV, fullDatasetDir, desitnationDir, extract)
