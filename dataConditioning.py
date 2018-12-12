@@ -399,7 +399,7 @@ if super:
 
 # Extract from Zip files?
 extract = False
-noCopy = True
+noCopy = False
 
 # Shorten the dataset?
 quick = False

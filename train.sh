@@ -1,1 +1,1 @@
- python keras-retinanet/keras_retinanet/bin/train.py csv Output/retinaNetTrain.csv Output/retinaNetTrainClass.csv --weights
+python keras-retinanet/keras_retinanet/bin/train.py --freeze-backbone --multi-gpu 8 --batch-size 16 --steps 100 --epochs 50 --multi-gpu-force --weights "pretrained_models/resnet50_coco_best_v2.1.0.h5" csv Output/retinaNetTrain.csv Output/retinaNetTrainClass.csv 

@@ -16,6 +16,8 @@ pretrained_models
 ChallengeMetaData
 Snapshot
 Output
+logs
+snapshots
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)
