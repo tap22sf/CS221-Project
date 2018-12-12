@@ -7,7 +7,12 @@ from PIL import Image
 
 import prepRetinaNet
 
-quick = 1
+# Extract from Zip files?
+extract = False
+zips = False
+
+# Do a short or long run
+quick = False
 
 #
 # Update an image dictionary extracted from the trainingCSV, by looking in a set of directories,
@@ -101,7 +106,7 @@ class ImageDescriptor:
             subplot.add_patch(rect)
 
 
-def extractAllImages(imageList, zipFiles, destDir, extract):
+def extractAllImages(imageList, zipFiles, srcDir, destDir, extract):
 
     # Make sure destination Dir exists
     if not os.path.exists(destDir):
@@ -110,7 +115,9 @@ def extractAllImages(imageList, zipFiles, destDir, extract):
     # If we are not re-extracting from zip files...then just scan the destination directory
     count = 0
     if not extract:
-        for root, dirs, files in os.walk(destDir): 
+        for root, dirs, files in os.walk(srcDir): 
+            print ('Looking at ()'.format(srcDir))
+
             for f in files:
                 imageID = os.path.splitext(os.path.basename(f))[0]
                 imageList[imageID] = ImageDescriptor(imageID, True, "dirscan", root+'\\'+f)
@@ -137,7 +144,7 @@ def extractAllImages(imageList, zipFiles, destDir, extract):
                             print (extracted)
     return
 
-def extractChallengeImages(datasetCSV, destinationDirectory, extract):
+def extractChallengeImages(datasetCSV, srcDir, destinationDirectory, extract):
 
     # First column is the image list
     trainingImageList = {}
@@ -159,7 +166,10 @@ def extractChallengeImages(datasetCSV, destinationDirectory, extract):
                             'D:\\train_07',
                             'D:\\train_08']
 
-    extractAllImages(trainingImageList, imageFiles, destinationDirectory, extract)
+    srcDir =           '/workspace/OpenImagesV4/train'
+
+
+    extractAllImages(trainingImageList, imageFiles, srcDir, destinationDirectory, extract)
     
     total = 0
     used = 0
@@ -322,9 +332,23 @@ desitnationDir            = 'F:\TrainingImages'
 valImageDatsetCSV         = 'ChallengeMetaData\\cchallenge-2018-image-ids-valset-vrd.csv'
 trainImages               = 'ChallengeMetaData\\train-images-boxable-with-rotation.csv'
 
+
+trainImageDatsetCSV       = '/workspace/OpenImagesV4/ChallengeMetaData/challenge-2018-train-vrd.csv'
+trainBBoxDatsetCSV        = '/workspace/OpenImagesV4/ChallengeMetaData/challenge-2018-train-vrd-bbox.csv'
+trainLabelsDatsetCSV      = '/workspace/OpenImagesV4/ChallengeMetaData/challenge-2018-train-vrd-labels.csv'
+trainClassesDatsetCSV     = '/workspace/OpenImagesV4/ChallengeMetaData/challenge-2018-classes-vrd.csv'
+
+retinaNetTrainCSV         = 'Output/retinaNetTrain.csv'
+retinaNetClassCSV         = 'Output/retinaNetTrainClass.csv'
+
+fullDatasetDir            = '/home/dataset/OpenImagesV4/train'
+desitnationDir            = '/workspace/TrainingImages'
+
+valImageDatsetCSV         = 'ChallengeMetaData\\cchallenge-2018-image-ids-valset-vrd.csv'
+trainImages               = 'ChallengeMetaData\\train-images-boxable-with-rotation.csv'
+
 print ("Starting Training Set Image Extraction")
-extract = False
-detectedImages = extractChallengeImages(trainImageDatsetCSV, desitnationDir, extract)
+detectedImages = extractChallengeImages(trainImageDatsetCSV, fullDatasetDir, desitnationDir, extract)
 
 # Set up classes decoder
 classDict = readClasses(trainClassesDatsetCSV)
