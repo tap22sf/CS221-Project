@@ -132,31 +132,32 @@ def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick):
     # Just scan the source directory and copy to the dest
     else:
         count = 0
-        with os.scandir(srcDir) as it:
+        dirlist = os.listdir(srcDir)
 
-            # Extract if found in the dictionary
-            for imageID in imageList:
-                fn = imageID + '.jpg'
-                print(fn)
+        # Extract if found in the dictionary
+        for imageID in imageList:
+            fn = imageID + '.jpg'
+            print(fn)
 
-                if fn in it:
+            if fn in dirlist:
 
-                    f = fn.name
+                imageList[imageID] = ImageDescriptor(imageID, True, "dirscan", os.path.join(destDir,fn))
 
-                    imageList[imageID] = ImageDescriptor(imageID, True, "dirscan", destDir+'/'+f)
+                # Copy to the destination if missing
+                src = os.path.join(srcDir, fn)
+                dst = os.path.join(destDir, fn)
 
-                    # Copy to the destination if missing
-                    copyfile(root+'/'+f, destDir+'/'+f)
+                copyfile(src, dst)
 
-                    count += 1
-                    if count % 10000 == 0:
-                        print(count)
+                count += 1
+                if count % 10000 == 0:
+                    print(count)
 
-                    if quick and count == 100:
-                        return
+                if quick and count == 100:
+                    return
 
-                else:
-                    print("Not in")
+            else:
+                print("Image not in directory")
 
 
 
@@ -355,7 +356,7 @@ trainImageDatsetCSV       = 'ChallengeMetaData\\challenge-2018-train-vrd.csv'
 trainBBoxDatsetCSV        = 'ChallengeMetaData\\challenge-2018-train-vrd-bbox.csv'
 trainLabelsDatsetCSV      = 'ChallengeMetaData\\challenge-2018-train-vrd-labels.csv'
 trainClassesDatsetCSV     = 'ChallengeMetaData\\challenge-2018-classes-vrd.csv'
-fullDatasetDir            = 'F:\TrainingImages'
+fullDatasetDir            = 'F:\TrainingImages\\train_00'
 
 retinaNetTrainCSV         = 'Output\\retinaNetTrain.csv'
 retinaNetDevCSV           = 'Output\\retinaNetDev.csv'
