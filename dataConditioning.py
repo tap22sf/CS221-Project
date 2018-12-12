@@ -166,7 +166,7 @@ def extractChallengeImages(datasetCSV, srcDir, destinationDirectory, extract):
                             'D:\\train_07',
                             'D:\\train_08']
 
-    srcDir =           '/workspace/OpenImagesV4/train'
+
 
 
     extractAllImages(trainingImageList, imageFiles, srcDir, destinationDirectory, extract)
@@ -332,20 +332,19 @@ desitnationDir            = 'F:\TrainingImages'
 valImageDatsetCSV         = 'ChallengeMetaData\\cchallenge-2018-image-ids-valset-vrd.csv'
 trainImages               = 'ChallengeMetaData\\train-images-boxable-with-rotation.csv'
 
+# Updated to work with SaturnV
+trainImageDatsetCSV       = '/home/dataset/OpenImagesV4/challenge-2018-train-vrd.csv'
+trainBBoxDatsetCSV        = '/home/dataset/OpenImagesV4/challenge-2018-train-vrd-bbox.csv'
+trainLabelsDatsetCSV      = '/home/dataset/OpenImagesV4/workspace/OpenImagesV4/ChallengeMetaData/challenge-2018-train-vrd-labels.csv'
+trainClassesDatsetCSV     = '/home/dataset/OpenImagesV4/ChallengeMetaData/challenge-2018-classes-vrd.csv'
+fullDatasetDir            = '/home/dataset/OpenImagesV4/train'
 
-trainImageDatsetCSV       = '/workspace/OpenImagesV4/ChallengeMetaData/challenge-2018-train-vrd.csv'
-trainBBoxDatsetCSV        = '/workspace/OpenImagesV4/ChallengeMetaData/challenge-2018-train-vrd-bbox.csv'
-trainLabelsDatsetCSV      = '/workspace/OpenImagesV4/ChallengeMetaData/challenge-2018-train-vrd-labels.csv'
-trainClassesDatsetCSV     = '/workspace/OpenImagesV4/ChallengeMetaData/challenge-2018-classes-vrd.csv'
-
+desitnationDir            = '/workspace/TrainingImages'
 retinaNetTrainCSV         = 'Output/retinaNetTrain.csv'
 retinaNetClassCSV         = 'Output/retinaNetTrainClass.csv'
 
-fullDatasetDir            = '/home/dataset/OpenImagesV4/train'
-desitnationDir            = '/workspace/TrainingImages'
-
-valImageDatsetCSV         = 'ChallengeMetaData\\cchallenge-2018-image-ids-valset-vrd.csv'
-trainImages               = 'ChallengeMetaData\\train-images-boxable-with-rotation.csv'
+valImageDatsetCSV         = '/workspace/OpenImagesV4/challenge-2018-image-ids-valset-vrd.csv'
+trainImages               = '/workspace/OpenImagesV4/train-images-boxable-with-rotation.csv'
 
 print ("Starting Training Set Image Extraction")
 detectedImages = extractChallengeImages(trainImageDatsetCSV, fullDatasetDir, desitnationDir, extract)
