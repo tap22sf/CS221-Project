@@ -386,9 +386,12 @@ if super:
     trainClassesDatsetCSV     = './ChallengeMetaData/challenge-2018-classes-vrd.csv'
     fullDatasetDir            = '/home/dataset/OpenImagesV4/train'
 
-    desitnationDir            = '/workspace/TrainingImages'
     retinaNetTrainCSV         = 'Output/retinaNetTrain.csv'
+    retinaNetDevCSV           = 'Output/retinaNetDev.csv'
+    retinaNetTestCSV          = 'Output/retinaNetTest.csv'
     retinaNetClassCSV         = 'Output/retinaNetTrainClass.csv'
+
+    desitnationDir            = '/workspace/TrainingImages'
 
     valImageDatsetCSV         = './ChallengeMetaData/challenge-2018-image-ids-valset-vrd.csv'
     trainImages               = './ChallengeMetaData/train-images-boxable-with-rotation.csv'
