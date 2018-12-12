@@ -133,6 +133,7 @@ def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick):
     else:
         count = 0
         dirlist = os.listdir(srcDir)
+        print("Detected {} images in source directory".format(len(dirlist)))
 
         # Extract if found in the dictionary
         for imageID in imageList:
