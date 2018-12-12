@@ -4,15 +4,10 @@ import numpy as np
 import cv2
 from zipfile import ZipFile
 from PIL import Image
+from shutil import copyfile
 
 import prepRetinaNet
 
-# Extract from Zip files?
-extract = False
-zips = False
-
-# Do a short or long run
-quick = False
 
 #
 # Update an image dictionary extracted from the trainingCSV, by looking in a set of directories,
@@ -45,7 +40,7 @@ class ImageDescriptor:
     # Scale a bounding box to its image
     def prep(self):
     
-        # Load the refrenced image
+        # Load the referenced image
         if self.detected:
 
             with Image.open(self.path) as self.img:
@@ -77,7 +72,7 @@ class ImageDescriptor:
             plt.imshow(np.resize(image, (self.img.shape[0], self.image.shape[1])), interpolation="bicubic", cmap="gray")
         else:
             plt.imshow(self.img, interpolation="bicubic")
-    
+
         # Pick a color and keep it the same for all matching boxes
         colors = ['y','g','r','b']
         chosenColors = {}
@@ -85,7 +80,7 @@ class ImageDescriptor:
         boxIndex = 0
         for box in self.normalizedBBoxes:
             
-            # Grab the box lable and confidence
+            # Grab the box label and confidence
             boxLabel = self.bboxes[boxIndex][2]
             boxConfidence = int(self.bboxes[boxIndex][3])
             boxIndex += 1
@@ -93,7 +88,7 @@ class ImageDescriptor:
             # Default color
             c = 'm'
             if boxConfidence < 1:
-                # Low confridence box color
+                # Low confidence box color
                 c = 'w'
             elif boxLabel in chosenColors:
                 c = chosenColors[boxLabel]
@@ -106,45 +101,60 @@ class ImageDescriptor:
             subplot.add_patch(rect)
 
 
-def extractAllImages(imageList, zipFiles, srcDir, destDir, extract):
-
+def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick):
+    # If we are extracting from a zip -
     # Make sure destination Dir exists
     if not os.path.exists(destDir):
         os.mkdir(destDir)
 
-    # If we are not re-extracting from zip files...then just scan the destination directory
-    count = 0
-    if not extract:
-        for root, dirs, files in os.walk(srcDir): 
-            print ('Looking at ()'.format(srcDir))
-
-            for f in files:
-                imageID = os.path.splitext(os.path.basename(f))[0]
-                imageList[imageID] = ImageDescriptor(imageID, True, "dirscan", root+'\\'+f)
-                count += 1
-                if quick and count >=10000000: return
-
-    # opening the zip file in READ mode
-    else:
+    if extract:
         extracted = 0
-        for zFile in zipFiles: 
-            with ZipFile(zFile+'.zip', 'r') as zip: 
-                # printing all the contents of the zip file 
-                print('Xtracting from: {}'.format(zFile)) 
+        for zFile in zipFiles:
+            with ZipFile(zFile + '.zip', 'r') as zip:
+                # printing all the contents of the zip file
+                print('Xtracting from: {}'.format(zFile))
                 for f in zip.namelist():
-                
+
                     imageID = os.path.splitext(os.path.basename(f))[0]
 
-                    if image in imageList:
+                    # Extract if found in the dictionary
+                    if imageID in imageList:
                         imageList[imageID] = ImageDescriptor(imageID, True, zFile, destDir)
                         zip.extract(f, destDir)
                         extracted += 1
 
                         if extracted % 10000 == 0:
-                            print (extracted)
+                            print(extracted)
+
+                        if quick and extracted == 100:
+                            return
+
+    # Just scan the source directory and copy to the dest
+    else:
+        count = 0
+        for root, dirs, files in os.walk(srcDir):
+            print ('Looking at {}'.format(root))
+
+            for f in files:
+                imageID = os.path.splitext(os.path.basename(f))[0]
+
+                # Extract if found in the dictionary
+                if imageID in imageList:
+                    imageList[imageID] = ImageDescriptor(imageID, True, "dirscan", destDir+'\\'+f)
+
+                    # Copy to the destination if missing
+                    copyfile(root+'\\'+f, destDir+'\\'+f)
+
+                    count += 1
+                    if count % 10000 == 0:
+                        print(count)
+
+                    if quick and count == 100:
+                        return
+
     return
 
-def extractChallengeImages(datasetCSV, srcDir, destinationDirectory, extract):
+def extractChallengeImages(datasetCSV, srcDir, destinationDirectory, extract, quick):
 
     # First column is the image list
     trainingImageList = {}
@@ -169,7 +179,7 @@ def extractChallengeImages(datasetCSV, srcDir, destinationDirectory, extract):
 
 
 
-    extractAllImages(trainingImageList, imageFiles, srcDir, destinationDirectory, extract)
+    extractAllImages(trainingImageList, imageFiles, srcDir, destinationDirectory, extract, quick)
     
     total = 0
     used = 0
@@ -184,8 +194,7 @@ def extractChallengeImages(datasetCSV, srcDir, destinationDirectory, extract):
         else:
             if not quick: print ('Missing: {}'.format(ID.imageID))
 
-    print ("Summarizing")
-    print ('Image refrences in training Set: {} Found in Zips: {}'.format(total, used))
+    print ('Image references in training Set: {} Found in file search or zips: {}'.format(used, total))
     return newDict
 
 def readBBoxes(imageList, BBoxCSV):
@@ -209,8 +218,7 @@ def readBBoxes(imageList, BBoxCSV):
             else:
                 notMatched += 1
     
-    print ("Summarizing")
-    print ('BBoxes detected in training Set: {} to {} images,  Found in CSV: {}'.format(matched, unique, notMatched+matched))
+    print ('BBoxes detected in training Set: {} for {} images,  Found in CSV: {}'.format(matched, unique, notMatched+matched))
 
     for imageID, ID in imageList.items():
         if ID.bboxes == []:
@@ -240,8 +248,7 @@ def readLabels(imageList,labelsCSV,classDict):
             else:
                 notMatched += 1
     
-    print ("Summarizing")
-    print ('Labels detected in training Set: {} to {} images,  Found in CSV: {}'.format(matched, unique, notMatched+matched))
+    print ('Labels detected in training Set: {} in {} images,  Total in CSV: {}'.format(matched, unique, notMatched+matched))
 
     for imageID, ID in imageList.items():
         if ID.labels == []:
@@ -265,7 +272,7 @@ def readClasses(classesCSV):
     
     return classDict    
 
-def writeRetinanetTrainCSV(imageList, csvName, lcsvName):
+def writeRetinanetTrainCSV(imageList, trainbCSVName, devCSVName, lcsvName, trainSplit):
 
     # Open up the new outputfile
     usedClassNames = {}
@@ -275,47 +282,59 @@ def writeRetinanetTrainCSV(imageList, csvName, lcsvName):
     print('Generating RetinaNet training files')
 
     # Open up the new outputfiles
-    with open(os.path.join(csvName), 'w', newline='') as f:
-        csvWriter = csv.writer(f)
+    with open(os.path.join(trainbCSVName), 'w', newline='') as f:
+        trainWriter = csv.writer(f)
 
-        with open(os.path.join(lcsvName), 'w', newline='') as fl:
-            lcsvWriter = csv.writer(fl)
-            for id, ID in imageList.items():
-                if ID.path:
-                    
-                    ID.prep()
-                    xsize, ysize = ID.img.size
+        with open(os.path.join(devCSVName), 'w', newline='') as fl:
+            devWriter = csv.writer(fl)
 
-                    for bbox in ID.bboxes:
-                        label = bbox[2]
-                        l = ID.classDict[label]
-                        x1 =  int(float(bbox[4]) *xsize)
-                        y1 =  int(float(bbox[6]) *ysize)
-                        x2 =  int(float(bbox[5]) *xsize)
-                        y2 =  int(float(bbox[7]) *ysize)
+            with open(os.path.join(lcsvName), 'w', newline='') as fl:
+                labelWriter = csv.writer(fl)
 
-                        # if x1 > x2:
-                        #     x1, x2 = x2, x1
-                        #     y1, y2 = y2, y1
+                count = 0
+                total = len(imageList)
 
-                        if x2 <= x1 or y2 <= y1:
-                            print ('Ignoring BBox on {} : {},{} {},{}'.format(id, x1, y1, x2, y2))
-                            continue
+                for id, ID in imageList.items():
+                    if ID.path:
 
-                        csvWriter.writerow([ID.path, x1, y1, x2, y2, l])
+                        ID.prep()
+                        xsize, ysize = ID.img.size
+                        count += 1
 
-                        processed += 1
-                        if processed % 10000 == 0:
-                            print(processed)
+                        for bbox in ID.bboxes:
+                            label = bbox[2]
+                            l = ID.classDict[label]
+                            x1 =  int(float(bbox[4]) *xsize)
+                            y1 =  int(float(bbox[6]) *ysize)
+                            x2 =  int(float(bbox[5]) *xsize)
+                            y2 =  int(float(bbox[7]) *ysize)
 
-                        if l not in usedClassNames:
-                            usedClassNames[l] = index
-                            lcsvWriter.writerow([l, index])
-                            index += 1
+                            # if x1 > x2:
+                            #     x1, x2 = x2, x1
+                            #     y1, y2 = y2, y1
+
+                            if x2 <= x1 or y2 <= y1:
+                                print ('Ignoring BBox on {} : {},{} {},{}'.format(id, x1, y1, x2, y2))
+                                continue
+
+                            # Split train dev
+                            if count < total * trainSplit:
+                                trainWriter.writerow([ID.path, x1, y1, x2, y2, l])
+                            else:
+                                devWriter.writerow([ID.path, x1, y1, x2, y2, l])
+
+                            processed += 1
+                            if processed % 10000 == 0:
+                                print(processed)
+
+                            if l not in usedClassNames:
+                                usedClassNames[l] = index
+                                labelWriter.writerow([l, index])
+                                index += 1
 
 
-                else:
-                    print ('No path for {}'.format(id))
+                    else:
+                        print ('No path for {}'.format(id))
 
 
 
@@ -324,30 +343,46 @@ trainImageDatsetCSV       = 'ChallengeMetaData\\challenge-2018-train-vrd.csv'
 trainBBoxDatsetCSV        = 'ChallengeMetaData\\challenge-2018-train-vrd-bbox.csv'
 trainLabelsDatsetCSV      = 'ChallengeMetaData\\challenge-2018-train-vrd-labels.csv'
 trainClassesDatsetCSV     = 'ChallengeMetaData\\challenge-2018-classes-vrd.csv'
+fullDatasetDir            = 'F:\TrainingImages'
 
 retinaNetTrainCSV         = 'Output\\retinaNetTrain.csv'
-retinaNetClassCSV         = 'Output\\retinaNetTrainClass.csv'
+retinaNetDevCSV           = 'Output\\retinaNetDev.csv'
+retinaNetTestCSV          = 'Output\\retinaNetTest.csv'
+retinaNetClassCSV         = 'Output\\retinaNetClass.csv'
 
-desitnationDir            = 'F:\TrainingImages'
-valImageDatsetCSV         = 'ChallengeMetaData\\cchallenge-2018-image-ids-valset-vrd.csv'
+desitnationDir            = 'F:\DataTest'
+
+valImageDatsetCSV         = 'ChallengeMetaData\\challenge-2018-image-ids-valset-vrd.csv'
 trainImages               = 'ChallengeMetaData\\train-images-boxable-with-rotation.csv'
 
 # Updated to work with SaturnV
-trainImageDatsetCSV       = './ChallengeMetaData/challenge-2018-train-vrd.csv'
-trainBBoxDatsetCSV        = './ChallengeMetaData/challenge-2018-train-vrd-bbox.csv'
-trainLabelsDatsetCSV      = './ChallengeMetaData/challenge-2018-train-vrd-labels.csv'
-trainClassesDatsetCSV     = './ChallengeMetaData/challenge-2018-classes-vrd.csv'
-fullDatasetDir            = '/home/dataset/OpenImagesV4/train'
+super = False
+if super:
+    trainImageDatsetCSV       = './ChallengeMetaData/challenge-2018-train-vrd.csv'
+    trainBBoxDatsetCSV        = './ChallengeMetaData/challenge-2018-train-vrd-bbox.csv'
+    trainLabelsDatsetCSV      = './ChallengeMetaData/challenge-2018-train-vrd-labels.csv'
+    trainClassesDatsetCSV     = './ChallengeMetaData/challenge-2018-classes-vrd.csv'
+    fullDatasetDir            = '/home/dataset/OpenImagesV4/train'
 
-desitnationDir            = '/workspace/TrainingImages'
-retinaNetTrainCSV         = 'Output/retinaNetTrain.csv'
-retinaNetClassCSV         = 'Output/retinaNetTrainClass.csv'
+    desitnationDir            = '/workspace/TrainingImages'
+    retinaNetTrainCSV         = 'Output/retinaNetTrain.csv'
+    retinaNetClassCSV         = 'Output/retinaNetTrainClass.csv'
 
-valImageDatsetCSV         = './ChallengeMetaData/challenge-2018-image-ids-valset-vrd.csv'
-trainImages               = './ChallengeMetaData/train-images-boxable-with-rotation.csv'
+    valImageDatsetCSV         = './ChallengeMetaData/challenge-2018-image-ids-valset-vrd.csv'
+    trainImages               = './ChallengeMetaData/train-images-boxable-with-rotation.csv'
+
+
+# Extract from Zip files?
+extract = False
+
+# Shorten the dataset?
+quick = False
+
+# Size of the training set
+trainSplit = .8
 
 print ("Starting Training Set Image Extraction")
-detectedImages = extractChallengeImages(trainImageDatsetCSV, fullDatasetDir, desitnationDir, extract)
+detectedImages = extractChallengeImages(trainImageDatsetCSV, fullDatasetDir, desitnationDir, extract, quick)
 
 # Set up classes decoder
 classDict = readClasses(trainClassesDatsetCSV)
@@ -358,8 +393,6 @@ readLabels(detectedImages, trainLabelsDatsetCSV, classDict)
 # Now check the bounding boxes against the images and update the image database
 readBBoxes(detectedImages, trainBBoxDatsetCSV)
 
-# Generate a csvfile for training that is retinanet friendly
-writeRetinanetTrainCSV(detectedImages, retinaNetTrainCSV, retinaNetClassCSV)
+# Generate a csvfile for training that is retinanet friendly - also do the dev split
+writeRetinanetTrainCSV(detectedImages, retinaNetTrainCSV, retinaNetDevCSV, retinaNetClassCSV, trainSplit)
 
-# Generate a csvfile that lists the validation images for the VRD
-#
