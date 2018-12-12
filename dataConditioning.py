@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 from zipfile import ZipFile
 from PIL import Image
+
 import prepRetinaNet
 
 quick = 1
