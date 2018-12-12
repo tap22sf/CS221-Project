@@ -315,7 +315,7 @@ def writeRetinanetTrainCSV(imageList, trainbCSVName, devCSVName, lcsvName, train
 
                 count = 0
                 total = len(imageList)
-
+                print ("Writing Training Files for {} images".format(total))
                 for id, ID in imageList.items():
                     if ID.path:
 
