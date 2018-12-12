@@ -5,7 +5,7 @@ import os
 import keras
 
 import sys
-sys.path.append('.\\keras-retinanet')
+sys.path.append(r'./keras-retinanet')
 
 
 # import keras_retinanet
