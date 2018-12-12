@@ -1,12 +1,9 @@
 import os
-#import wget
-
-# import keras
+import wget
 import keras
 
 import sys
 sys.path.append(r'./keras-retinanet')
-
 
 # import keras_retinanet
 from keras_retinanet import models
@@ -24,7 +21,7 @@ def downloadWeights(url, model):
         os.mkdir(fullPath)
         
     print ('Downloading trained weights: {} to : {}'.format(model, fullPath))
-    #wget.download(url, fullPath)
+    wget.download(url, fullPath)
     
 def reFetchRetinaNet():
     # Check to see if any weigths need to be downloaded
@@ -60,3 +57,5 @@ def loadModel():
     print(model.summary())
     return model
 
+
+reFetchRetinaNet()
