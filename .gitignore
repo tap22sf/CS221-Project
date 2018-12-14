@@ -6,6 +6,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+*.csv
 
 .idea
 .vs
@@ -18,6 +19,8 @@ Snapshot
 Output
 logs
 snapshots
+tensorBoard
+*.png
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)

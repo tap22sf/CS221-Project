@@ -134,20 +134,24 @@ def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick, noCop
         count = 0
         dirdict = {}
 
-        for f in os.listdir(srcDir):
-            dirdict[f] = True
+        for dirName, subdirList, fileList in os.walk(srcDir):
+            print('Found directory: %s' % dirName)
+            print("Detected {} images in source directory".format(len(fileList)))
+            for fname in fileList:
+                imageID = os.path.splitext(os.path.basename(fname))[0]
+                src = os.path.join(srcDir, dirName, fname)
+                dirdict[imageID] = src
 
-        print("Detected {} images in source directory".format(len(dirdict)))
 
         # Extract if found in the dictionary
         for imageID in imageList:
-            fn = imageID + '.jpg'
 
-            if fn in dirdict:
+            if imageID in dirdict:
+                fn = imageID + '.jpg'
 
                 # Copy to the destination if missing
-                src = os.path.join(srcDir, fn)
                 dst = os.path.join(destDir, fn)
+                src = dirdict[imageID]
 
                 fp = dst
                 if noCopy:
@@ -156,7 +160,8 @@ def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick, noCop
                 imageList[imageID] = ImageDescriptor(imageID, True, "dirscan", fp)
 
                 if not noCopy:
-                    copyfile(src, dst)
+                    if not os.path.isfile(dst):
+                        copyfile(src, dst)
 
                 count += 1
                 if count % 10000 == 0:
@@ -164,11 +169,6 @@ def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick, noCop
 
                 if quick and count == 100:
                     return
-
-            else:
-                print("Image not in directory")
-
-
 
     return
 
@@ -365,7 +365,7 @@ trainImageDatsetCSV       = 'ChallengeMetaData\\challenge-2018-train-vrd.csv'
 trainBBoxDatsetCSV        = 'ChallengeMetaData\\challenge-2018-train-vrd-bbox.csv'
 trainLabelsDatsetCSV      = 'ChallengeMetaData\\challenge-2018-train-vrd-labels.csv'
 trainClassesDatsetCSV     = 'ChallengeMetaData\\challenge-2018-classes-vrd.csv'
-fullDatasetDir            = 'F:\TrainingImages\\train_00'
+fullDatasetDir            = 'F:\TrainingImages'
 
 retinaNetTrainCSV         = 'Output\\retinaNetTrain.csv'
 retinaNetDevCSV           = 'Output\\retinaNetDev.csv'
@@ -378,7 +378,7 @@ valImageDatsetCSV         = 'ChallengeMetaData\\challenge-2018-image-ids-valset-
 trainImages               = 'ChallengeMetaData\\train-images-boxable-with-rotation.csv'
 
 # Updated to work with SaturnV
-super = True
+super = False
 if super:
     trainImageDatsetCSV       = './ChallengeMetaData/challenge-2018-train-vrd.csv'
     trainBBoxDatsetCSV        = './ChallengeMetaData/challenge-2018-train-vrd-bbox.csv'

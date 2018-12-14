@@ -1,5 +1,5 @@
 import os
-import wget
+#import wget
 import keras
 
 import sys
@@ -21,7 +21,7 @@ def downloadWeights(url, model):
         os.mkdir(fullPath)
         
     print ('Downloading trained weights: {} to : {}'.format(model, fullPath))
-    wget.download(url, fullPath)
+#    wget.download(url, fullPath)
     
 def reFetchRetinaNet():
     # Check to see if any weigths need to be downloaded

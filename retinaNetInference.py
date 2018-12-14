@@ -15,7 +15,6 @@ import numpy as np
 import time
 import csv
 
-import matplotlib.pyplot as plt
 
 # set tf backend to allow memory to grow, instead of claiming everything
 import tensorflow as tf

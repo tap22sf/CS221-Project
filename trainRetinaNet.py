@@ -1,13 +1,19 @@
 import os
 import wget
 import argparse
+import pickle
 
 # import keras
 import keras
 
 import sys
 sys.path.append('.\\keras-retinanet')
-sys.path.append('.\\keras-resnet')
+
+import matplotlib
+matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt
+import cv2
 
 # import keras_retinanet
 from keras_retinanet import models
@@ -35,6 +41,17 @@ from keras_retinanet.utils.transform import random_transform_generator
 
 # set tf backend to allow memory to grow, instead of claiming everything
 import tensorflow as tf
+
+def makedirs(path):
+    # Intended behavior: try to create the directory,
+    # pass if the directory exists already, fails otherwise.
+    # Meant for Python 2.7/3.n compatibility.
+    try:
+        os.makedirs(path)
+    except OSError:
+        if not os.path.isdir(path):
+            raise
+
 
 def get_session():
     """ Construct a modified tf session.
@@ -154,6 +171,7 @@ def parse_args(args):
     parser.add_argument('--weighted-average', help='Compute the mAP using the weighted average of precisions among classes.', action='store_true')
 
     return parser.parse_args(args)
+
 def model_with_weights(model, weights, skip_mismatch):
     """ Load weights for model.
 
@@ -218,6 +236,80 @@ def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0, freeze_
 
     return model, training_model, prediction_model
 
+
+def create_callbacks(model, training_model, prediction_model, validation_generator, args):
+    """ Creates the callbacks to use during training.
+
+    Args
+        model: The base model.
+        training_model: The model that is used for training.
+        prediction_model: The model that should be used for validation.
+        validation_generator: The generator for creating validation data.
+        args: parseargs args object.
+
+    Returns:
+        A list of callbacks used for training.
+    """
+    callbacks = []
+
+    tensorboard_callback = None
+
+    if args.tensorboard_dir:
+        tensorboard_callback = keras.callbacks.TensorBoard(
+            log_dir                = args.tensorboard_dir,
+            histogram_freq         = 0,
+            batch_size             = args.batch_size,
+            write_graph            = True,
+            write_grads            = False,
+            write_images           = False,
+            embeddings_freq        = 0,
+            embeddings_layer_names = None,
+            embeddings_metadata    = None
+        )
+        callbacks.append(tensorboard_callback)
+
+    if args.evaluation and validation_generator:
+        if args.dataset_type == 'coco':
+            from ..callbacks.coco import CocoEval
+
+            # use prediction model for evaluation
+            evaluation = CocoEval(validation_generator, tensorboard=tensorboard_callback)
+        else:
+            evaluation = Evaluate(validation_generator, tensorboard=tensorboard_callback, weighted_average=args.weighted_average)
+        evaluation = RedirectModel(evaluation, prediction_model)
+        callbacks.append(evaluation)
+
+    # save the model
+    if args.snapshots:
+        # ensure directory created first; otherwise h5py will error after epoch.
+        makedirs(args.snapshot_path)
+        checkpoint = keras.callbacks.ModelCheckpoint(
+            os.path.join(
+                args.snapshot_path,
+                '{backbone}_{dataset_type}_{{epoch:02d}}.h5'.format(backbone=args.backbone, dataset_type=args.dataset_type)
+            ),
+            verbose=1,
+            # save_best_only=True,
+            # monitor="mAP",
+            # mode='max'
+        )
+        checkpoint = RedirectModel(checkpoint, model)
+        callbacks.append(checkpoint)
+
+    callbacks.append(keras.callbacks.ReduceLROnPlateau(
+        monitor    = 'loss',
+        factor     = 0.1,
+        patience   = 2,
+        verbose    = 1,
+        mode       = 'auto',
+        min_delta  = 0.0001,
+        cooldown   = 0,
+        min_lr     = 0
+    ))
+
+    return callbacks
+
+
 def train(args=None):
     # parse arguments
     if args is None:
@@ -271,9 +363,61 @@ def train(args=None):
     # print model summary
     print(model.summary())
 
+    # create the callbacks
+    callbacks = create_callbacks(
+        model,
+        training_model,
+        prediction_model,
+        validation_generator,
+        args,
+    )
+
+    # start training
+    history = training_model.fit_generator(
+        generator=train_generator,
+        steps_per_epoch=args.steps,
+        epochs=args.epochs,
+        verbose=1,
+        callbacks=callbacks,
+    )
+
+    return history
+
 args = (
-    'csv',  'Output\\retinaNetTrain.csv', 'Output\\retinaNetTrainClass.csv'
+    '--freeze-backbone',
+    '--tensorboard-dir', '.\\tensorBoard',
+    '--epochs', '30',
+    '--steps', '100',
+    '--batch-size', '16',
+    '--image-max-side','500',
+    '--weights', 'Snapshot\\resnet50_csv_10.h5',
+    'csv',  'Output\\retinaNetDev.csv', 'Output\\retinaNetClass.csv',
 )
 
+history = train (args)
+with open('./trainHistoryDict', 'wb') as file_pi:
+    pickle.dump(history.history, file_pi)
 
-train(args)
+
+def plot_history(histories, key):
+    plt.style.use("ggplot")
+    plt.figure(figsize=(16, 10))
+
+    for name, history in histories:
+        val = plt.plot(history.epoch, history.history[key],'--', label=name.title() + ' Val')
+        plt.plot(history.epoch, history.history[key], color=val[0].get_color(), label=name.title() + ' Train')
+
+    plt.xlabel('Epochs')
+    plt.ylabel(key.replace('_', ' ').title())
+    plt.legend()
+
+    plt.xlim([0, max(history.epoch)])
+
+    plt.savefig(key+"plot.png")
+    plt.close()
+
+plot_history([('baseline', history)], 'loss')
+plot_history([('baseline', history)], 'regression_loss')
+plot_history([('baseline', history)], 'classification_loss')
+
+plt.show()
