@@ -21,7 +21,7 @@ from keras_retinanet.utils.image import read_image_bgr, preprocess_image, resize
 from keras_retinanet.utils.visualization import draw_box, draw_caption
 from keras_retinanet.utils.colors import label_color
 
-# Change these to absolute imports if you copy this script outside the keras_retinanet package.
+# Reusing Keras_retinanet
 from keras_retinanet import layers  # noqa: F401
 from keras_retinanet import losses
 from keras_retinanet import models
@@ -383,15 +383,22 @@ def train(args=None):
 
     return history
 
+
+
 args = (
     '--freeze-backbone',
     '--tensorboard-dir', '.\\tensorBoard',
     '--epochs', '30',
     '--steps', '100',
-    '--batch-size', '16',
+    '--batch-size', '32',
+    '--multi-gpu', '8',
+    '--multi-gpu-force',
     '--image-max-side','500',
-    '--weights', 'Snapshot\\resnet50_csv_10.h5',
-    'csv',  'Output\\retinaNetDev.csv', 'Output\\retinaNetClass.csv',
+
+#    '--weights', 'Snapshot\\resnet50_csv_10.h5',
+    '--weights', 'pretrained_models/resnet50_coco_best_v2.1.0.h5',
+#    'csv',  'Output\\retinaNetDev.csv', 'Output\\retinaNetClass.csv',
+    'csv',  'Output/retinaNetDev.csv', 'Output/retinaNetClass.csv',
 )
 
 history = train (args)

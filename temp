@@ -1,0 +1,233 @@
+None
+Epoch 1/50
+100/100 [==============================] - 224s 2s/step - loss: 2.6121 - regression_loss: 1.4111 - classification_loss: 1.2010
+
+Epoch 00001: saving model to ./snapshots/resnet50_csv_01.h5
+Epoch 2/50
+100/100 [==============================] - 204s 2s/step - loss: 2.3759 - regression_loss: 1.3739 - classification_loss: 1.0020
+
+Epoch 00002: saving model to ./snapshots/resnet50_csv_02.h5
+Epoch 3/50
+100/100 [==============================] - 219s 2s/step - loss: 2.0879 - regression_loss: 1.3743 - classification_loss: 0.7136
+
+Epoch 00003: saving model to ./snapshots/resnet50_csv_03.h5
+Epoch 4/50
+100/100 [==============================] - 213s 2s/step - loss: 2.0070 - regression_loss: 1.3673 - classification_loss: 0.6396
+
+Epoch 00004: saving model to ./snapshots/resnet50_csv_04.h5
+Epoch 5/50
+100/100 [==============================] - 217s 2s/step - loss: 1.9478 - regression_loss: 1.3472 - classification_loss: 0.6005
+
+Epoch 00005: saving model to ./snapshots/resnet50_csv_05.h5
+Epoch 6/50
+100/100 [==============================] - 216s 2s/step - loss: 1.8820 - regression_loss: 1.3341 - classification_loss: 0.5479
+
+Epoch 00006: saving model to ./snapshots/resnet50_csv_06.h5
+Epoch 7/50
+100/100 [==============================] - 217s 2s/step - loss: 1.8477 - regression_loss: 1.3333 - classification_loss: 0.5145
+
+Epoch 00007: saving model to ./snapshots/resnet50_csv_07.h5
+Epoch 8/50
+100/100 [==============================] - 214s 2s/step - loss: 1.8329 - regression_loss: 1.3314 - classification_loss: 0.5015
+
+Epoch 00008: saving model to ./snapshots/resnet50_csv_08.h5
+Epoch 9/50
+100/100 [==============================] - 218s 2s/step - loss: 1.8031 - regression_loss: 1.3217 - classification_loss: 0.4814
+
+Epoch 00009: saving model to ./snapshots/resnet50_csv_09.h5
+Epoch 10/50
+100/100 [==============================] - 215s 2s/step - loss: 1.7976 - regression_loss: 1.3211 - classification_loss: 0.4765
+
+Epoch 00010: saving model to ./snapshots/resnet50_csv_10.h5
+Epoch 11/50
+100/100 [==============================] - 219s 2s/step - loss: 1.8165 - regression_loss: 1.3473 - classification_loss: 0.4692
+
+Epoch 00011: saving model to ./snapshots/resnet50_csv_11.h5
+Epoch 12/50
+100/100 [==============================] - 213s 2s/step - loss: 1.8211 - regression_loss: 1.3641 - classification_loss: 0.4570
+
+Epoch 00012: saving model to ./snapshots/resnet50_csv_12.h5
+
+Epoch 00012: ReduceLROnPlateau reducing learning rate to 9.999999747378752e-07.
+Epoch 13/50
+100/100 [==============================] - 218s 2s/step - loss: 1.7659 - regression_loss: 1.3214 - classification_loss: 0.4444
+
+Epoch 00013: saving model to ./snapshots/resnet50_csv_13.h5
+Epoch 14/50
+100/100 [==============================] - 210s 2s/step - loss: 1.7927 - regression_loss: 1.3316 - classification_loss: 0.4611
+
+Epoch 00014: saving model to ./snapshots/resnet50_csv_14.h5
+Epoch 15/50
+100/100 [==============================] - 216s 2s/step - loss: 1.7930 - regression_loss: 1.3425 - classification_loss: 0.4505
+
+Epoch 00015: saving model to ./snapshots/resnet50_csv_15.h5
+
+Epoch 00015: ReduceLROnPlateau reducing learning rate to 9.999999974752428e-08.
+Epoch 16/50
+100/100 [==============================] - 217s 2s/step - loss: 1.7596 - regression_loss: 1.3095 - classification_loss: 0.4501
+
+Epoch 00016: saving model to ./snapshots/resnet50_csv_16.h5
+Epoch 17/50
+100/100 [==============================] - 211s 2s/step - loss: 1.7895 - regression_loss: 1.3440 - classification_loss: 0.4455
+
+Epoch 00017: saving model to ./snapshots/resnet50_csv_17.h5
+Epoch 18/50
+100/100 [==============================] - 224s 2s/step - loss: 1.7923 - regression_loss: 1.3457 - classification_loss: 0.4467
+
+Epoch 00018: saving model to ./snapshots/resnet50_csv_18.h5
+
+Epoch 00018: ReduceLROnPlateau reducing learning rate to 1.0000000116860975e-08.
+Epoch 19/50
+100/100 [==============================] - 213s 2s/step - loss: 1.7954 - regression_loss: 1.3473 - classification_loss: 0.4481
+
+Epoch 00019: saving model to ./snapshots/resnet50_csv_19.h5
+Epoch 20/50
+100/100 [==============================] - 212s 2s/step - loss: 1.7563 - regression_loss: 1.3141 - classification_loss: 0.4422
+
+Epoch 00020: saving model to ./snapshots/resnet50_csv_20.h5
+Epoch 21/50
+100/100 [==============================] - 213s 2s/step - loss: 1.7913 - regression_loss: 1.3466 - classification_loss: 0.4446
+
+Epoch 00021: saving model to ./snapshots/resnet50_csv_21.h5
+Epoch 22/50
+100/100 [==============================] - 212s 2s/step - loss: 1.7798 - regression_loss: 1.3349 - classification_loss: 0.4449
+
+Epoch 00022: saving model to ./snapshots/resnet50_csv_22.h5
+
+Epoch 00022: ReduceLROnPlateau reducing learning rate to 9.999999939225292e-10.
+Epoch 23/50
+100/100 [==============================] - 213s 2s/step - loss: 1.7627 - regression_loss: 1.3151 - classification_loss: 0.4476
+
+Epoch 00023: saving model to ./snapshots/resnet50_csv_23.h5
+Epoch 24/50
+100/100 [==============================] - 215s 2s/step - loss: 1.7904 - regression_loss: 1.3456 - classification_loss: 0.4448
+
+Epoch 00024: saving model to ./snapshots/resnet50_csv_24.h5
+
+Epoch 00024: ReduceLROnPlateau reducing learning rate to 9.999999717180686e-11.
+Epoch 25/50
+100/100 [==============================] - 212s 2s/step - loss: 1.7615 - regression_loss: 1.3106 - classification_loss: 0.4509
+
+Epoch 00025: saving model to ./snapshots/resnet50_csv_25.h5
+Epoch 26/50
+100/100 [==============================] - 212s 2s/step - loss: 1.7631 - regression_loss: 1.3126 - classification_loss: 0.4505
+
+Epoch 00026: saving model to ./snapshots/resnet50_csv_26.h5
+
+Epoch 00026: ReduceLROnPlateau reducing learning rate to 9.99999943962493e-12.
+Epoch 27/50
+100/100 [==============================] - 213s 2s/step - loss: 1.7924 - regression_loss: 1.3380 - classification_loss: 0.4543
+
+Epoch 00027: saving model to ./snapshots/resnet50_csv_27.h5
+Epoch 28/50
+100/100 [==============================] - 214s 2s/step - loss: 1.7865 - regression_loss: 1.3355 - classification_loss: 0.4509
+
+Epoch 00028: saving model to ./snapshots/resnet50_csv_28.h5
+
+Epoch 00028: ReduceLROnPlateau reducing learning rate to 9.999999092680235e-13.
+Epoch 29/50
+100/100 [==============================] - 212s 2s/step - loss: 1.7403 - regression_loss: 1.2915 - classification_loss: 0.4488
+
+Epoch 00029: saving model to ./snapshots/resnet50_csv_29.h5
+Epoch 30/50
+100/100 [==============================] - 218s 2s/step - loss: 1.7781 - regression_loss: 1.3352 - classification_loss: 0.4428
+
+Epoch 00030: saving model to ./snapshots/resnet50_csv_30.h5
+Epoch 31/50
+100/100 [==============================] - 215s 2s/step - loss: 1.7900 - regression_loss: 1.3378 - classification_loss: 0.4522
+
+Epoch 00031: saving model to ./snapshots/resnet50_csv_31.h5
+
+Epoch 00031: ReduceLROnPlateau reducing learning rate to 9.9999988758398e-14.
+Epoch 32/50
+100/100 [==============================] - 214s 2s/step - loss: 1.7600 - regression_loss: 1.3056 - classification_loss: 0.4544
+
+Epoch 00032: saving model to ./snapshots/resnet50_csv_32.h5
+Epoch 33/50
+100/100 [==============================] - 210s 2s/step - loss: 1.7536 - regression_loss: 1.3109 - classification_loss: 0.4426
+
+Epoch 00033: saving model to ./snapshots/resnet50_csv_33.h5
+
+Epoch 00033: ReduceLROnPlateau reducing learning rate to 9.999999146890344e-15.
+Epoch 34/50
+100/100 [==============================] - 212s 2s/step - loss: 1.7616 - regression_loss: 1.3107 - classification_loss: 0.4509
+
+Epoch 00034: saving model to ./snapshots/resnet50_csv_34.h5
+Epoch 35/50
+100/100 [==============================] - 216s 2s/step - loss: 1.7869 - regression_loss: 1.3481 - classification_loss: 0.4387
+
+Epoch 00035: saving model to ./snapshots/resnet50_csv_35.h5
+
+Epoch 00035: ReduceLROnPlateau reducing learning rate to 9.999998977483753e-16.
+Epoch 36/50
+100/100 [==============================] - 214s 2s/step - loss: 1.7837 - regression_loss: 1.3338 - classification_loss: 0.4500
+
+Epoch 00036: saving model to ./snapshots/resnet50_csv_36.h5
+Epoch 37/50
+100/100 [==============================] - 213s 2s/step - loss: 1.7652 - regression_loss: 1.3157 - classification_loss: 0.4495
+
+Epoch 00037: saving model to ./snapshots/resnet50_csv_37.h5
+
+Epoch 00037: ReduceLROnPlateau reducing learning rate to 9.999998977483754e-17.
+Epoch 38/50
+100/100 [==============================] - 213s 2s/step - loss: 1.7535 - regression_loss: 1.3054 - classification_loss: 0.4481
+
+Epoch 00038: saving model to ./snapshots/resnet50_csv_38.h5
+Epoch 39/50
+100/100 [==============================] - 213s 2s/step - loss: 1.7755 - regression_loss: 1.3292 - classification_loss: 0.4463
+
+Epoch 00039: saving model to ./snapshots/resnet50_csv_39.h5
+
+Epoch 00039: ReduceLROnPlateau reducing learning rate to 9.999998845134856e-18.
+Epoch 40/50
+100/100 [==============================] - 209s 2s/step - loss: 1.7655 - regression_loss: 1.3203 - classification_loss: 0.4452
+
+Epoch 00040: saving model to ./snapshots/resnet50_csv_40.h5
+Epoch 41/50
+100/100 [==============================] - 216s 2s/step - loss: 1.7618 - regression_loss: 1.3196 - classification_loss: 0.4423
+
+Epoch 00041: saving model to ./snapshots/resnet50_csv_41.h5
+
+Epoch 00041: ReduceLROnPlateau reducing learning rate to 9.999999010570977e-19.
+Epoch 42/50
+100/100 [==============================] - 212s 2s/step - loss: 1.7958 - regression_loss: 1.3363 - classification_loss: 0.4595
+
+Epoch 00042: saving model to ./snapshots/resnet50_csv_42.h5
+Epoch 43/50
+100/100 [==============================] - 218s 2s/step - loss: 1.7796 - regression_loss: 1.3235 - classification_loss: 0.4561
+
+Epoch 00043: saving model to ./snapshots/resnet50_csv_43.h5
+
+Epoch 00043: ReduceLROnPlateau reducing learning rate to 9.999999424161285e-20.
+Epoch 44/50
+100/100 [==============================] - 210s 2s/step - loss: 1.7749 - regression_loss: 1.3267 - classification_loss: 0.4482
+
+Epoch 00044: saving model to ./snapshots/resnet50_csv_44.h5
+Epoch 45/50
+100/100 [==============================] - 210s 2s/step - loss: 1.7884 - regression_loss: 1.3344 - classification_loss: 0.4540
+
+Epoch 00045: saving model to ./snapshots/resnet50_csv_45.h5
+
+Epoch 00045: ReduceLROnPlateau reducing learning rate to 9.999999682655225e-21.
+Epoch 46/50
+100/100 [==============================] - 213s 2s/step - loss: 1.8015 - regression_loss: 1.3500 - classification_loss: 0.4515
+
+Epoch 00046: saving model to ./snapshots/resnet50_csv_46.h5
+Epoch 47/50
+100/100 [==============================] - 212s 2s/step - loss: 1.8046 - regression_loss: 1.3613 - classification_loss: 0.4433
+
+Epoch 00047: saving model to ./snapshots/resnet50_csv_47.h5
+
+Epoch 00047: ReduceLROnPlateau reducing learning rate to 9.999999682655225e-22.
+Epoch 48/50
+100/100 [==============================] - 211s 2s/step - loss: 1.7944 - regression_loss: 1.3479 - classification_loss: 0.4465
+
+Epoch 00048: saving model to ./snapshots/resnet50_csv_48.h5
+Epoch 49/50
+100/100 [==============================] - 208s 2s/step - loss: 1.7705 - regression_loss: 1.3176 - classification_loss: 0.4529
+
+Epoch 00049: saving model to ./snapshots/resnet50_csv_49.h5
+
+Epoch 00049: ReduceLROnPlateau reducing learning rate to 9.999999682655225e-23.
+Epoch 50/50
+100/100 [==============================] - 209s 2s/step - loss: 1.7825 - regression_loss: 1.3404 - classification_loss: 0.4421

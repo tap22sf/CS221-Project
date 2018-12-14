@@ -43,8 +43,14 @@ class ImageDescriptor:
         # Load the referenced image
         if self.detected:
 
-            with Image.open(self.path) as self.img:
-                xsize, ysize = self.img.size
+            try:
+                with Image.open(self.path) as self.img:
+                    xsize, ysize = self.img.size
+            except IOError:
+                self.detected = False
+                xsize, ysize = 0,0
+                print ("Error: File does not appear to exist : {}".format(self.path))
+                return
 
             #self.img = cv2.cvtColor(cv2.imread(self.path, cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
             #
@@ -101,7 +107,7 @@ class ImageDescriptor:
             subplot.add_patch(rect)
 
 
-def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick, noCopy):
+def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick, noCopy, noScan):
     # If we are extracting from a zip -
     # Make sure destination Dir exists
     if not os.path.exists(destDir):
@@ -134,34 +140,42 @@ def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick, noCop
         count = 0
         dirdict = {}
 
-        for dirName, subdirList, fileList in os.walk(srcDir):
-            print('Found directory: %s' % dirName)
-            print("Detected {} images in source directory".format(len(fileList)))
-            for fname in fileList:
-                imageID = os.path.splitext(os.path.basename(fname))[0]
-                src = os.path.join(srcDir, dirName, fname)
-                dirdict[imageID] = src
+        print (srcDir)
+
+        if not noScan:
+            for dirName, subdirList, fileList in os.walk(srcDir):
+                print('Found directory: %s' % dirName)
+                print("Detected {} images in source directory".format(len(fileList)))
+                for fname in fileList:
+                    imageID = os.path.splitext(os.path.basename(fname))[0]
+                    src = os.path.join(srcDir, dirName, fname)
+                    dirdict[imageID] = src
 
 
         # Extract if found in the dictionary
         for imageID in imageList:
 
-            if imageID in dirdict:
+            if imageID in dirdict or noScan:
                 fn = imageID + '.jpg'
 
                 # Copy to the destination if missing
                 dst = os.path.join(destDir, fn)
-                src = dirdict[imageID]
-
-                fp = dst
-                if noCopy:
-                    fp = src
-
-                imageList[imageID] = ImageDescriptor(imageID, True, "dirscan", fp)
+                imageList[imageID] = ImageDescriptor(imageID, True, "dirscan", dst)
 
                 if not noCopy:
                     if not os.path.isfile(dst):
-                        copyfile(src, dst)
+                        src = dst
+                        if not noScan:
+                            src = dirdict[imageID]
+                            
+                            if not os.path.isfile(src):
+                                print ("Copy - but file missing in Src : {}".format(src))
+                            else:
+                                copyfile(src, dst)
+
+                else:
+                    if not os.path.isfile(dst):
+                        print ("No Copy - but file missing in dest : {}".format(dst))
 
                 count += 1
                 if count % 10000 == 0:
@@ -172,7 +186,7 @@ def extractAllImages(imageList, zipFiles, srcDir, destDir, extract, quick, noCop
 
     return
 
-def extractChallengeImages(datasetCSV, srcDir, destinationDirectory, extract, quick, noCopy):
+def extractChallengeImages(datasetCSV, srcDir, destinationDirectory, extract, quick, noCopy, noScan):
 
     # First column is the image list
     trainingImageList = {}
@@ -198,10 +212,7 @@ def extractChallengeImages(datasetCSV, srcDir, destinationDirectory, extract, qu
                             'D:\\train_07',
                             'D:\\train_08']
 
-
-
-
-    extractAllImages(trainingImageList, imageFiles, srcDir, destinationDirectory, extract, quick, noCopy)
+    extractAllImages(trainingImageList, imageFiles, srcDir, destinationDirectory, extract, quick, noCopy, noScan)
     
     total = 0
     used = 0
@@ -280,6 +291,7 @@ def readLabels(imageList,labelsCSV,classDict):
 def readClasses(classesCSV):
 
     classDict = {}
+    print ("Loading Class Info")
 
     # First column is the image list
     with open(os.path.join(classesCSV)) as f:
@@ -320,7 +332,11 @@ def writeRetinanetTrainCSV(imageList, trainbCSVName, devCSVName, lcsvName, train
                     if ID.path:
 
                         ID.prep()
-                        xsize, ysize = ID.img.size
+                        if ID.detected:
+                            xsize, ysize = ID.img.size
+                        else:
+                            continue
+
                         count += 1
 
                         for bbox in ID.bboxes:
@@ -378,7 +394,7 @@ valImageDatsetCSV         = 'ChallengeMetaData\\challenge-2018-image-ids-valset-
 trainImages               = 'ChallengeMetaData\\train-images-boxable-with-rotation.csv'
 
 # Updated to work with SaturnV
-super = False
+super = True
 if super:
     trainImageDatsetCSV       = './ChallengeMetaData/challenge-2018-train-vrd.csv'
     trainBBoxDatsetCSV        = './ChallengeMetaData/challenge-2018-train-vrd-bbox.csv'
@@ -389,7 +405,7 @@ if super:
     retinaNetTrainCSV         = 'Output/retinaNetTrain.csv'
     retinaNetDevCSV           = 'Output/retinaNetDev.csv'
     retinaNetTestCSV          = 'Output/retinaNetTest.csv'
-    retinaNetClassCSV         = 'Output/retinaNetTrainClass.csv'
+    retinaNetClassCSV         = 'Output/retinaNetClass.csv'
 
     desitnationDir            = '/workspace/TrainingImages'
 
@@ -400,6 +416,7 @@ if super:
 # Extract from Zip files?
 extract = False
 noCopy = False
+noScan = True    # Just rebuild the trining files from the dest dir
 
 # Shorten the dataset?
 quick = False
@@ -408,7 +425,7 @@ quick = False
 trainSplit = .8
 
 print ("Starting Training Set Image Extraction")
-detectedImages = extractChallengeImages(trainImageDatsetCSV, fullDatasetDir, desitnationDir, extract, quick, noCopy)
+detectedImages = extractChallengeImages(trainImageDatsetCSV, fullDatasetDir, desitnationDir, extract, quick, noCopy, noScan)
 
 # Set up classes decoder
 classDict = readClasses(trainClassesDatsetCSV)
