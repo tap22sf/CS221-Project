@@ -7,7 +7,6 @@
 *.userosscache
 *.sln.docstates
 *.csv
-
 .idea
 .vs
 Traintemp

@@ -394,7 +394,7 @@ valImageDatsetCSV         = 'ChallengeMetaData\\challenge-2018-image-ids-valset-
 trainImages               = 'ChallengeMetaData\\train-images-boxable-with-rotation.csv'
 
 # Updated to work with SaturnV
-super = True
+super = False
 if super:
     trainImageDatsetCSV       = './ChallengeMetaData/challenge-2018-train-vrd.csv'
     trainBBoxDatsetCSV        = './ChallengeMetaData/challenge-2018-train-vrd-bbox.csv'
@@ -416,13 +416,13 @@ if super:
 # Extract from Zip files?
 extract = False
 noCopy = False
-noScan = True    # Just rebuild the trining files from the dest dir
+noScan = True    # Just rebuild the training files from the dest dir
 
 # Shorten the dataset?
 quick = False
 
 # Size of the training set
-trainSplit = .8
+trainSplit = 0.8
 
 print ("Starting Training Set Image Extraction")
 detectedImages = extractChallengeImages(trainImageDatsetCSV, fullDatasetDir, desitnationDir, extract, quick, noCopy, noScan)

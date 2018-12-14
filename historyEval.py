@@ -20,23 +20,21 @@ with open('./trainHistoryDict', 'rb') as file_pi:
     history = pickle.load(file_pi)
 
 
-def plot_history(histories, key):
+def plot_history(history, keys):
     plt.style.use("ggplot")
     plt.figure(figsize=(16, 10))
 
-    for name, history in histories:
-        val = plt.plot(history[key],'--', label=name.title() + ' Val')
-        plt.plot(history[key], color=val[0].get_color(), label=name.title() + ' Train')
+    for key in keys:
+        val = plt.plot(history[key],'--', label=key.title())
 
     plt.xlabel('Epochs')
     plt.ylabel(key.replace('_', ' ').title())
     plt.legend()
 
-    plt.savefig(key+"plotPIC.png")
+    plt.savefig("zout"+ keys[0]+ ".png")
     plt.close()
 
-plot_history([('baseline', history)], 'loss')
-plot_history([('baseline', history)], 'regression_loss')
-plot_history([('baseline', history)], 'classification_loss')
+plot_history(history, ['loss', 'val_loss'])
+plot_history(history, ['classification_loss', 'val_classification_loss', 'regression_loss', 'val_regression_loss'])
 
 plt.show()

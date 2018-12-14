@@ -24,15 +24,12 @@ def get_session():
     config.gpu_options.allow_growth = True
     return tf.Session(config=config)
 
-# use this environment flag to change which GPU to use
-#os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-
 # set the modified tf session as backend in keras
 keras.backend.tensorflow_backend.set_session(get_session())
 
 # adjust this to point to your downloaded/trained model
-model_path = r"E:\Projects\Stanford\CS221\Project\TAPProj\Snapshot\resnet50_csv_10_inf.h5"
-labelPath = r"E:\Projects\Stanford\CS221\Project\TAPProj\Output\retinaNetTrainClass.csv"
+model_path = r"E:\Projects\Stanford\CS221\Project\TAPProj\snapshots\resnet50_csv_50.h5""
+labelPath = r"E:\Projects\Stanford\CS221\Project\TAPProj\Output\retinaNetClass.csv"
 
 # load retinanet model
 model = models.load_model(model_path, backbone_name='resnet50')

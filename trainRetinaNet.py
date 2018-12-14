@@ -1,3 +1,7 @@
+#
+# Note: Portions of this code are reused form portions of the keras-retinanet repository
+#
+
 import os
 import wget
 import argparse
@@ -144,13 +148,14 @@ def parse_args(args):
     csv_parser = subparsers.add_parser('csv')
     csv_parser.add_argument('annotations', help='Path to CSV file containing annotations for training.')
     csv_parser.add_argument('classes', help='Path to a CSV file containing class label mapping.')
-    csv_parser.add_argument('--val-annotations', help='Path to CSV file containing annotations for validation (optional).')
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--snapshot',          help='Resume training from a snapshot.')
     group.add_argument('--imagenet-weights',  help='Initialize the model with pretrained imagenet weights. This is the default behaviour.', action='store_const', const=True, default=True)
     group.add_argument('--weights',           help='Initialize the model with weights from a file.')
     group.add_argument('--no-weights',        help='Don\'t initialize the model with any weights.', dest='imagenet_weights', action='store_const', const=False)
+
+    parser.add_argument('--val-annotations',   help='Path to CSV file containing annotations for validation (optional).', type=str)
 
     parser.add_argument('--backbone',         help='Backbone model used by retinanet.', default='resnet50', type=str)
     parser.add_argument('--batch-size',       help='Size of the batches.', default=1, type=int)
@@ -159,6 +164,7 @@ def parse_args(args):
     parser.add_argument('--multi-gpu-force',  help='Extra flag needed to enable (experimental) multi-gpu support.', action='store_true')
     parser.add_argument('--epochs',           help='Number of epochs to train.', type=int, default=50)
     parser.add_argument('--steps',            help='Number of steps per epoch.', type=int, default=10000)
+    parser.add_argument('--vsteps',           help='Number of steps for validation.', type=int, default=10000)
     parser.add_argument('--snapshot-path',    help='Path to store snapshots of models during training (defaults to \'./snapshots\')', default='./snapshots')
     parser.add_argument('--tensorboard-dir',  help='Log directory for Tensorboard output', default='./logs')
     parser.add_argument('--no-snapshots',     help='Disable saving snapshots.', dest='snapshots', action='store_false')
@@ -296,16 +302,16 @@ def create_callbacks(model, training_model, prediction_model, validation_generat
         checkpoint = RedirectModel(checkpoint, model)
         callbacks.append(checkpoint)
 
-    callbacks.append(keras.callbacks.ReduceLROnPlateau(
-        monitor    = 'loss',
-        factor     = 0.1,
-        patience   = 2,
-        verbose    = 1,
-        mode       = 'auto',
-        min_delta  = 0.0001,
-        cooldown   = 0,
-        min_lr     = 0
-    ))
+    #callbacks.append(keras.callbacks.ReduceLROnPlateau(
+    #     monitor    = 'loss',
+    #     factor     = 0.1,
+    #     patience   = 2,
+    #     verbose    = 1,
+    #     mode       = 'auto',
+    #     min_delta  = 0.0001,
+    #     cooldown   = 0,
+    #     min_lr     = 0
+    # ))
 
     return callbacks
 
@@ -333,7 +339,6 @@ def train(args=None):
 
     # create the generators
     train_generator, validation_generator = create_generators(args, backbone.preprocess_image)
-
 
     # create the model
     if args.snapshot is not None:
@@ -375,6 +380,8 @@ def train(args=None):
     # start training
     history = training_model.fit_generator(
         generator=train_generator,
+        validation_data=validation_generator,
+        validation_steps=args.vsteps,
         steps_per_epoch=args.steps,
         epochs=args.epochs,
         verbose=1,
@@ -388,17 +395,21 @@ def train(args=None):
 args = (
     '--freeze-backbone',
     '--tensorboard-dir', '.\\tensorBoard',
-    '--epochs', '30',
+    '--epochs', '40',
     '--steps', '100',
-    '--batch-size', '32',
-    '--multi-gpu', '8',
-    '--multi-gpu-force',
+    '--vsteps', '50',
+    '--batch-size', '15',
+    '--no-evaluation',
     '--image-max-side','500',
+    '--weights', 'pretrained_models\\resnet50_coco_best_v2.1.0.h5',
+    '--val-annotations', 'Output\\retinaNetDev.csv',
+    'csv', 'Output\\retinaNetTrain.csv', 'Output\\retinaNetClass.csv',
 
-#    '--weights', 'Snapshot\\resnet50_csv_10.h5',
-    '--weights', 'pretrained_models/resnet50_coco_best_v2.1.0.h5',
-#    'csv',  'Output\\retinaNetDev.csv', 'Output\\retinaNetClass.csv',
-    'csv',  'Output/retinaNetDev.csv', 'Output/retinaNetClass.csv',
+
+#    '--multi-gpu', '2',
+#    '--multi-gpu-force',
+#    '--weights', 'pretrained_models/resnet50_coco_best_v2.1.0.h5',
+#    'csv',  'Output/retinaNetDev.csv', 'Output/retinaNetClass.csv',
 )
 
 history = train (args)
